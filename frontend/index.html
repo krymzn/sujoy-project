@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>img2wav</title>
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css"
+      type="text/css"
+    />
+    <script src="./script.js" defer></script>
+    <script src="./p5/p5.js"></script>
+    <script src="./p5/addons/p5.sound.js"></script>
+  </head>
+  <body>
+    <h1></h1>
+    <div>
+      <!-- Example of a form that Dropzone can take over -->
+      <form
+        action="http://localhost:5000/upload-image"
+        method="POST"
+        class="dropzone"
+      ></form>
+      <!-- <input type="submit" value="Play" id="play"> -->
+    </div>
+  </body>
+</html>
