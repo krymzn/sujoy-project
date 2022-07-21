@@ -3,22 +3,17 @@ const path = require('path')
 const server = express()
 const getColors = require('get-image-colors')
 const cors = require("cors")
+const bodyParser = require('body-parser')
 
 server.use(cors())
+server.use(bodyParser.json({ limit: '10mb' }));
+server.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
-server.get("/", (req, res) => {
-    res.send("Hello World")
-})
-
-server.post("/upload-image", (req, res) => {
-    console.log("REQUEST BODY", req.body)
-})
 
 const options = {
     count: 7,
     type: 'image/jpeg'
 }
-
 
 let hslValuesArray = []
 
@@ -31,11 +26,20 @@ function getNotes(hslArr) {
     }
 }
 
-getColors(path.join(__dirname, 'soda.jpeg'), options).then(colors => {
-    hslValuesArray = colors.map(color => color.hsl())
-    for (let i = 0; i < hslValuesArray.length; i++) {
-        getNotes(hslValuesArray[i])
-    }
+server.post("/upload-image", (req, res) => {
+    console.log("REQUEST BODY", req.body)
+    notes = []
+    let base64Data = req.body.file.replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
+
+    require("fs").writeFile("out.jpeg", base64Data, 'base64', function (err) {
+        getColors(path.join(__dirname, 'out.jpeg'), options).then(colors => {
+            hslValuesArray = colors.map(color => color.hsl())
+            for (let i = 0; i < hslValuesArray.length; i++) {
+                getNotes(hslValuesArray[i])
+            }
+            res.json({ notes })
+        })
+    });
 })
 
 server.get("/getnotes", (req, res) => {

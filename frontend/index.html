@@ -15,13 +15,39 @@
   <body>
     <h1></h1>
     <div>
-      <!-- Example of a form that Dropzone can take over -->
-      <form
-        action="http://localhost:5000/upload-image"
-        method="POST"
-        class="dropzone"
-      ></form>
-      <!-- <input type="submit" value="Play" id="play"> -->
+      <img id="output_image" height="250px" width="250px" />
+      <form action="#">
+        <input type="file" onchange="preview_image(event)" />
+        <button type="button" onclick="submit_form(event)">Submit Image</button>
+      </form>
+      <script type="text/javascript">
+        let readerResult;
+        function preview_image(event) {
+          var reader = new FileReader();
+          reader.onload = function () {
+            var output = document.getElementById("output_image");
+            output.src = reader.result;
+            readerResult = reader.result;
+          };
+          reader.readAsDataURL(event.target.files[0]);
+        }
+
+        function submit_form(event) {
+          event.preventDefault();
+          fetch("http://localhost:5000/upload-image", {
+            method: "POST",
+            mode: "cors",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ file: readerResult }),
+          })
+            .then((res) => res.json())
+            .then((res) => {
+              console.log(`Response from Notes`, res);
+            });
+        }
+      </script>
     </div>
   </body>
 </html>
